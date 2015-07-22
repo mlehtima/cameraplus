@@ -26,10 +26,11 @@ Item {
     id: captureControl
 
     property bool capturePressed: false
+    property bool captureKeyPressed: false
     property bool zoomPressed: false
     property bool proximityClosed: false
     property bool canceled: false
-    property bool showCancelBanner: (zoomPressed || proximityClosed) && state == "capturing"
+    property bool showCancelBanner: (zoomPressed || proximityClosed || captureKeyPressed) && state == "capturing"
     property bool enable: true
     property bool capturing: state == "capturing"
 
@@ -39,7 +40,7 @@ Item {
     states: [
         State {
             name: "idle"
-            when: !capturePressed && !zoomPressed && !proximityClosed
+            when: !capturePressed && !zoomPressed && !proximityClosed && !captureKeyPressed
         },
         State {
             name: "canceled"
@@ -47,7 +48,7 @@ Item {
         },
         State {
             name: "capturing"
-            when: capturePressed || zoomPressed || proximityClosed
+            when: capturePressed || zoomPressed || proximityClosed || captureKeyPressed
         }
     ]
 

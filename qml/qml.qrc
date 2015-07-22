@@ -10,8 +10,10 @@
 	<file>CameraToolBarToolsContainer.qml</file>
 	<file>CameraView.qml</file>
 	<file>CaptureButton.qml</file>
+	<file>CaptureKeyButton.qml</file>
 	<file>CheckButton.qml</file>
 	<file>FlashButton.qml</file>
+	<file>FocusKeyButton.qml</file>
 	<file>FocusReticle.qml</file>
 	<file>ImageColorFilterButton.qml</file>
 	<file>ImageEvCompButton.qml</file>

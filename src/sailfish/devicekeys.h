@@ -49,6 +49,10 @@ signals:
   void volumeUpReleased();
   void volumeDownPressed();
   void volumeDownReleased();
+  void cameraPressed();
+  void cameraReleased();
+  void cameraFocusPressed();
+  void cameraFocusReleased();
   void repeatChanged();
 
 protected:

@@ -67,7 +67,8 @@ bool DeviceKeys::eventFilter(QObject *obj, QEvent *event) {
       return QObject::eventFilter(obj, event);
     }
 
-    if (key == Qt::Key_VolumeUp || key == Qt::Key_VolumeDown) {
+    if (key == Qt::Key_VolumeUp || key == Qt::Key_VolumeDown ||
+        key == Qt::Key_Camera || key == Qt::Key_CameraFocus) {
       processKeyEvent(key, ev);
     }
   }
@@ -106,6 +107,18 @@ void DeviceKeys::processKeyEvent(int key, int event) {
     emit volumeDownPressed();
   } else if (event == QEvent::KeyRelease && key == Qt::Key_VolumeDown) {
     emit volumeDownReleased();
+  } else if (event == QEvent::KeyPress && key == Qt::Key_Camera) {
+    emit cameraPressed();
+    return;
+  } else if (event == QEvent::KeyRelease && key == Qt::Key_Camera) {
+    emit cameraReleased();
+    return;
+  } else if (event == QEvent::KeyPress && key == Qt::Key_CameraFocus) {
+    emit cameraFocusPressed();
+    return;
+  } else if (event == QEvent::KeyRelease && key == Qt::Key_CameraFocus) {
+    emit cameraFocusReleased();
+    return;
   } else {
     return;
   }
