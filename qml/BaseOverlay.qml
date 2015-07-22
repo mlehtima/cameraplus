@@ -66,7 +66,7 @@ Item {
     CaptureControl {
         id: captureControl
         capturePressed: capture.pressed
-        captureKeyPressed: captureKey.pressed
+        captureKeyPressed: captureKey.captureKeyPressed
         zoomPressed: zoomCapture.zoomPressed
         proximityClosed: proximitySensor.sensorClosed
         onStartCapture: overlay.startCapture()
