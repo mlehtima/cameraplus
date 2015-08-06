@@ -24,16 +24,18 @@
 #define QT_CAM_VIEWFINDER_RENDERER_H
 
 #include <QObject>
-#include <gst/gst.h>
 #include <QRectF>
 
 class QtCamConfig;
 class QMetaObject;
 class QMatrix4x4;
 class QSizeF;
+class QtCamViewfinderRendererPrivate;
+typedef struct _GstElement GstElement;
 
 class QtCamViewfinderRenderer : public QObject {
   Q_OBJECT
+  friend class QtCamViewfinderFrameListenerPrivate;
 
 public:
   static QtCamViewfinderRenderer *create(QtCamConfig *config, QObject *parent = 0);
@@ -41,7 +43,8 @@ public:
 
   virtual ~QtCamViewfinderRenderer();
 
-  virtual void paint(const QMatrix4x4& matrix, const QRectF& viewport) = 0;
+  void paint(const QMatrix4x4& matrix, const QRectF& viewport);
+
   virtual void resize(const QSizeF& size) = 0;
   virtual void reset() = 0;
   virtual void start() = 0;
@@ -58,9 +61,10 @@ public:
   void calculateCoordinates(const QRect& crop, float *coords);
 
 protected:
+  virtual bool render(const QMatrix4x4& matrix, const QRectF& viewport) = 0;
+
   QtCamViewfinderRenderer(QtCamConfig *config, QObject *parent = 0);
-  int m_angle;
-  bool m_flipped;
+  QtCamViewfinderRendererPrivate *d_ptr;
 
 signals:
   void updateRequested();

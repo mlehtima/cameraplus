@@ -23,9 +23,12 @@
 #ifndef QT_CAM_GST_SAMPLE_H
 #define QT_CAM_GST_SAMPLE_H
 
-#include <gst/gst.h>
+#include <QtGlobal>
+#include <gst/video/video.h>
 
 class QtCamGstSamplePrivate;
+typedef struct _GstBuffer GstBuffer;
+typedef struct _GstCaps GstCaps;
 
 class QtCamGstSample {
 public:
@@ -34,6 +37,14 @@ public:
 
   GstBuffer *buffer() const;
   GstCaps *caps() const;
+
+  qint32 width() const;
+  qint32 height() const;
+
+  const uchar *data();
+  qint64 size();
+
+  GstVideoFormat format() const;
 
 private:
   QtCamGstSamplePrivate *d_ptr;

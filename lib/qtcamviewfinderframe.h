@@ -20,38 +20,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef PLUGIN_H
-#define PLUGIN_H
+#ifndef QT_CAM_VIEWFINDER_FRAME_H
+#define QT_CAM_VIEWFINDER_FRAME_H
 
-#if defined(QT4)
-#include <QDeclarativeExtensionPlugin>
-#elif defined(QT5)
-#include <QQmlExtensionPlugin>
-#endif
+#include <QByteArray>
+#include <QSize>
 
-#if defined(QT4)
-class DeclarativePlugin : public QDeclarativeExtensionPlugin {
-#elif defined(QT5)
-class DeclarativePlugin : public QQmlExtensionPlugin {
-#endif
+class QtCamViewfinderFramePrivate;
 
-  Q_OBJECT
-
-#if defined(QT5)
-  Q_PLUGIN_METADATA(IID "QtCamera");
-#endif
-
+class QtCamViewfinderFrame {
 public:
-  DeclarativePlugin(QObject *parent = 0);
-  ~DeclarativePlugin();
+  typedef enum {
+    RGB565,
+  } Format;
 
-#if defined(QT4)
-  void initializeEngine(QDeclarativeEngine *engine, const char *uri);
-#elif defined(QT5)
-  void initializeEngine(QQmlEngine *engine, const char *uri);
-#endif
+  QtCamViewfinderFrame(const QByteArray& data, const QSize& size, const Format& format);
+  ~QtCamViewfinderFrame();
 
-  void registerTypes(const char *uri);
+  QSize size() const;
+  Format format() const;
+  const QByteArray data();
+
+private:
+  QtCamViewfinderFramePrivate *d_ptr;
 };
 
-#endif /* PLUGIN_H */
+#endif /* QT_CAM_VIEWFINDER_FRAME_H */

@@ -20,38 +20,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef PLUGIN_H
-#define PLUGIN_H
+#ifndef QT_CAM_VIDEO_MODE_P_H
+#define QT_CAM_VIDEO_MODE_P_H
 
-#if defined(QT4)
-#include <QDeclarativeExtensionPlugin>
-#elif defined(QT5)
-#include <QQmlExtensionPlugin>
-#endif
+#include <QObject>
+#include "qtcammode_p.h"
 
-#if defined(QT4)
-class DeclarativePlugin : public QDeclarativeExtensionPlugin {
-#elif defined(QT5)
-class DeclarativePlugin : public QQmlExtensionPlugin {
-#endif
+class StreamRewriter;
 
+class QtCamVideoModePrivate : public QObject, public QtCamModePrivate {
   Q_OBJECT
 
-#if defined(QT5)
-  Q_PLUGIN_METADATA(IID "QtCamera");
-#endif
-
 public:
-  DeclarativePlugin(QObject *parent = 0);
-  ~DeclarativePlugin();
+  QtCamVideoModePrivate(QtCamDevicePrivate *dev);
+  ~QtCamVideoModePrivate();
 
-#if defined(QT4)
-  void initializeEngine(QDeclarativeEngine *engine, const char *uri);
-#elif defined(QT5)
-  void initializeEngine(QQmlEngine *engine, const char *uri);
-#endif
+  StreamRewriter *createRewriter(const char *prop, const char *name, bool copy);
+  void createRewriters();
+  void clearRewriters();
 
-  void registerTypes(const char *uri);
+  QtCamResolution resolution;
+  StreamRewriter *audio;
+  StreamRewriter *video;
+
+public slots:
+  void _d_idleStateChanged(bool isIdle);
 };
 
-#endif /* PLUGIN_H */
+#endif /* QT_CAM_VIDEO_MODE_P_H */

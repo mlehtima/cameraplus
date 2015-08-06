@@ -20,38 +20,40 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef PLUGIN_H
-#define PLUGIN_H
+#ifndef QT_CAM_VIEWFINDER_RENDERER_P_H
+#define QT_CAM_VIEWFINDER_RENDERER_P_H
 
-#if defined(QT4)
-#include <QDeclarativeExtensionPlugin>
-#elif defined(QT5)
-#include <QQmlExtensionPlugin>
-#endif
+#include <QSize>
+#include <QMutex>
+#include "qtcamviewfinderframe.h"
 
-#if defined(QT4)
-class DeclarativePlugin : public QDeclarativeExtensionPlugin {
-#elif defined(QT5)
-class DeclarativePlugin : public QQmlExtensionPlugin {
-#endif
-
-  Q_OBJECT
-
-#if defined(QT5)
-  Q_PLUGIN_METADATA(IID "QtCamera");
-#endif
-
+class QtCamViewfinderRendererBufferInterface {
 public:
-  DeclarativePlugin(QObject *parent = 0);
-  ~DeclarativePlugin();
-
-#if defined(QT4)
-  void initializeEngine(QDeclarativeEngine *engine, const char *uri);
-#elif defined(QT5)
-  void initializeEngine(QQmlEngine *engine, const char *uri);
-#endif
-
-  void registerTypes(const char *uri);
+  virtual void handleData(unsigned char *data,
+			  const QSize& size,
+			  const QtCamViewfinderFrame::Format& format) = 0;
 };
 
-#endif /* PLUGIN_H */
+class QtCamViewfinderRendererPrivate {
+public:
+  QtCamViewfinderRendererPrivate() :
+    angle(0),
+    flipped(false),
+    iface(0) {
+
+  }
+
+  void setInterface(QtCamViewfinderRendererBufferInterface *i) {
+    m_lock.lock();
+    iface = i;
+    m_lock.unlock();
+  }
+
+  int angle;
+  bool flipped;
+
+  QMutex m_lock;
+  QtCamViewfinderRendererBufferInterface *iface;
+};
+
+#endif /* QT_CAM_VIEWFINDER_RENDERER_P_H */

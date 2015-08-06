@@ -31,6 +31,8 @@
 #include "qtcamnotifications.h"
 #include "qtcampropertysetter.h"
 #include "qtcamviewfinderbufferlistener.h"
+#include "qtcamviewfinderframelistener.h"
+#include "qtcamviewfinderframelistener_p.h"
 #include "qtcamconfig_p.h"
 #include "qtcamimagesettings.h"
 #include "qtcamvideosettings.h"
@@ -116,10 +118,10 @@ QtCamDevice::QtCamDevice(QtCamConfig *config, const QString& name,
 						d_ptr, this);
 
   QObject::connect(d_ptr->listener, SIGNAL(error(const QString&, int, const QString&)),
-		   this, SLOT(_d_error(const QString&, int, const QString&)));
-  QObject::connect(d_ptr->listener, SIGNAL(started()), this, SLOT(_d_started()));
-  QObject::connect(d_ptr->listener, SIGNAL(stopped()), this, SLOT(_d_stopped()));
-  QObject::connect(d_ptr->listener, SIGNAL(stopping()), this, SLOT(_d_stopping()));
+		   d_ptr, SLOT(_d_error(const QString&, int, const QString&)));
+  QObject::connect(d_ptr->listener, SIGNAL(started()), d_ptr, SLOT(_d_started()));
+  QObject::connect(d_ptr->listener, SIGNAL(stopped()), d_ptr, SLOT(_d_stopped()));
+  QObject::connect(d_ptr->listener, SIGNAL(stopping()), d_ptr, SLOT(_d_stopping()));
 
   g_signal_connect(d_ptr->cameraBin, "notify::idle",
 		   G_CALLBACK(QtCamDevicePrivate::on_idle_changed), d_ptr);
@@ -142,6 +144,7 @@ QtCamDevice::QtCamDevice(QtCamConfig *config, const QString& name,
   d_ptr->video = new QtCamVideoMode(d_ptr, this);
 
   d_ptr->notifications = new QtCamNotifications(this, this);
+  d_ptr->frameListener = new QtCamViewfinderFrameListener(this);
 }
 
 QtCamDevice::~QtCamDevice() {
@@ -254,6 +257,8 @@ bool QtCamDevice::start() {
 
   SET_STATE(GST_STATE_PLAYING);
 
+  d_ptr->frameListener->d_ptr->setRenderer(d_ptr->viewfinder->renderer());
+
   return true;
 }
 
@@ -261,6 +266,8 @@ bool QtCamDevice::stop(bool force) {
   if (!d_ptr->cameraBin) {
     return true;
   }
+
+  d_ptr->frameListener->d_ptr->setRenderer(0);
 
   if (d_ptr->error) {
     gst_element_set_state(d_ptr->cameraBin, GST_STATE_NULL);
@@ -359,6 +366,10 @@ QtCamViewfinderBufferListener *QtCamDevice::bufferListener() const {
   return d_ptr->bufferListener;
 }
 
+QtCamViewfinderFrameListener *QtCamDevice::frameListener() const {
+  return d_ptr->frameListener;
+}
+
 QtCamNotifications *QtCamDevice::notifications() const {
   return d_ptr->notifications;
 }
@@ -441,5 +452,3 @@ QtCamVideoSettings *QtCamDevice::videoSettings() {
 
   return d_ptr->videoSettings;
 }
-
-#include "moc_qtcamdevice.cpp"

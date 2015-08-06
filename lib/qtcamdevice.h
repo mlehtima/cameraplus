@@ -37,6 +37,7 @@ class QtCamMetaData;
 class QtCamCapability;
 class QtCamNotifications;
 class QtCamViewfinderBufferListener;
+class QtCamViewfinderFrameListener;
 class QtCamImageSettings;
 class QtCamVideoSettings;
 
@@ -66,6 +67,7 @@ public:
   QtCamConfig *config() const;
   QtCamGstMessageListener *listener() const;
   QtCamViewfinderBufferListener *bufferListener() const;
+  QtCamViewfinderFrameListener *frameListener() const;
 
   QtCamNotifications *notifications() const;
 
@@ -89,11 +91,6 @@ signals:
   void sensorOrientationAngleChanged();
 
 private:
-  Q_PRIVATE_SLOT(d_ptr, void _d_error(const QString&, int, const QString&))
-  Q_PRIVATE_SLOT(d_ptr, void _d_started())
-  Q_PRIVATE_SLOT(d_ptr, void _d_stopped())
-  Q_PRIVATE_SLOT(d_ptr, void _d_stopping())
-
   friend class QtCamMetaDataPrivate;
   friend class QtCamCapability;
   friend class QtCamVideoTorch;

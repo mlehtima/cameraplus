@@ -1,5 +1,3 @@
-// -*- c++ -*-
-
 /*!
  * This file is part of CameraPlus.
  *
@@ -20,38 +18,35 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef PLUGIN_H
-#define PLUGIN_H
+#include "qtcamviewfinderframe.h"
 
-#if defined(QT4)
-#include <QDeclarativeExtensionPlugin>
-#elif defined(QT5)
-#include <QQmlExtensionPlugin>
-#endif
-
-#if defined(QT4)
-class DeclarativePlugin : public QDeclarativeExtensionPlugin {
-#elif defined(QT5)
-class DeclarativePlugin : public QQmlExtensionPlugin {
-#endif
-
-  Q_OBJECT
-
-#if defined(QT5)
-  Q_PLUGIN_METADATA(IID "QtCamera");
-#endif
-
+class QtCamViewfinderFramePrivate {
 public:
-  DeclarativePlugin(QObject *parent = 0);
-  ~DeclarativePlugin();
-
-#if defined(QT4)
-  void initializeEngine(QDeclarativeEngine *engine, const char *uri);
-#elif defined(QT5)
-  void initializeEngine(QQmlEngine *engine, const char *uri);
-#endif
-
-  void registerTypes(const char *uri);
+  QByteArray data;
+  QSize size;
+  QtCamViewfinderFrame::Format format;
 };
 
-#endif /* PLUGIN_H */
+QtCamViewfinderFrame::QtCamViewfinderFrame(const QByteArray& data,
+					   const QSize& size, const Format& format) {
+  d_ptr = new QtCamViewfinderFramePrivate;
+  d_ptr->data = data;
+  d_ptr->size = size;
+  d_ptr->format = format;
+}
+
+QtCamViewfinderFrame::~QtCamViewfinderFrame() {
+  delete d_ptr; d_ptr = 0;
+}
+
+QSize QtCamViewfinderFrame::size() const {
+  return d_ptr->size;
+}
+
+QtCamViewfinderFrame::Format QtCamViewfinderFrame::format() const {
+  return d_ptr->format;
+}
+
+const QByteArray QtCamViewfinderFrame::data() {
+  return d_ptr->data;
+}

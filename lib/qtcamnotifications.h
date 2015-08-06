@@ -50,8 +50,6 @@ signals:
   void autoFocusFailed();
 
 private:
-  Q_PRIVATE_SLOT(d_ptr, void autoFocusStatusChanged(GstMessage *));
-
   QtCamNotificationsPrivate *d_ptr;
 };
 

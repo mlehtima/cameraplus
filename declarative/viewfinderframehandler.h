@@ -20,38 +20,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef PLUGIN_H
-#define PLUGIN_H
+#ifndef VIEWFINDER_FRAME_HANDLER_H
+#define VIEWFINDER_FRAME_HANDLER_H
 
-#if defined(QT4)
-#include <QDeclarativeExtensionPlugin>
-#elif defined(QT5)
-#include <QQmlExtensionPlugin>
-#endif
+#include "viewfinderhandler.h"
+#include "qtcamviewfinderframehandler.h"
 
-#if defined(QT4)
-class DeclarativePlugin : public QDeclarativeExtensionPlugin {
-#elif defined(QT5)
-class DeclarativePlugin : public QQmlExtensionPlugin {
-#endif
+class QtCamDevice;
 
+class ViewfinderFrameHandler : public ViewfinderHandler, public QtCamViewfinderFrameHandler {
   Q_OBJECT
 
-#if defined(QT5)
-  Q_PLUGIN_METADATA(IID "QtCamera");
-#endif
-
 public:
-  DeclarativePlugin(QObject *parent = 0);
-  ~DeclarativePlugin();
+  ViewfinderFrameHandler(QObject *parent = 0);
+  ~ViewfinderFrameHandler();
 
-#if defined(QT4)
-  void initializeEngine(QDeclarativeEngine *engine, const char *uri);
-#elif defined(QT5)
-  void initializeEngine(QQmlEngine *engine, const char *uri);
-#endif
+  void handleFrame(const QtCamViewfinderFrame *frame);
 
-  void registerTypes(const char *uri);
+protected:
+  void registerHandler(QtCamDevice *dev);
+  void unregisterHandler(QtCamDevice *dev);
 };
 
-#endif /* PLUGIN_H */
+#endif /* VIEWFINDER_FRAME_HANDLER_H */

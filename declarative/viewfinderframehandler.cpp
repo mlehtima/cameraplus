@@ -18,33 +18,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "viewfinderbufferhandler.h"
+#include "viewfinderframehandler.h"
 #include "qtcamdevice.h"
-#include "qtcamviewfinderbufferlistener.h"
+#include "qtcamviewfinderframelistener.h"
 #if defined(QT4)
 #include <QDeclarativeInfo>
 #elif defined(QT5)
 #include <QQmlInfo>
 #endif
 
-ViewfinderBufferHandler::ViewfinderBufferHandler(QObject *parent) :
-  ViewfinderHandler("handleSample(const QtCamGstSample *)", parent) {
+ViewfinderFrameHandler::ViewfinderFrameHandler(QObject *parent) :
+  ViewfinderHandler("handleFrame(const QtCamViewfinderFrame *)", parent) {
 
 }
 
-ViewfinderBufferHandler::~ViewfinderBufferHandler() {
+ViewfinderFrameHandler::~ViewfinderFrameHandler() {
   deviceAboutToChange();
 }
 
-void ViewfinderBufferHandler::registerHandler(QtCamDevice *dev) {
-  dev->bufferListener()->addHandler(this);
+void ViewfinderFrameHandler::registerHandler(QtCamDevice *dev) {
+  dev->frameListener()->addHandler(this);
 }
 
-void ViewfinderBufferHandler::unregisterHandler(QtCamDevice *dev) {
-  dev->bufferListener()->removeHandler(this);
+void ViewfinderFrameHandler::unregisterHandler(QtCamDevice *dev) {
+  dev->frameListener()->removeHandler(this);
 }
 
-void ViewfinderBufferHandler::handleSample(const QtCamGstSample *sample) {
+void ViewfinderFrameHandler::handleFrame(const QtCamViewfinderFrame *frame) {
   QMutexLocker l(&m_mutex);
 
   if (!m_method.enclosingMetaObject()) {
@@ -52,7 +52,7 @@ void ViewfinderBufferHandler::handleSample(const QtCamGstSample *sample) {
   }
 
   if (!m_method.invoke(m_handler, Qt::DirectConnection,
-		       Q_ARG(const QtCamGstSample *, sample))) {
+		       Q_ARG(const QtCamViewfinderFrame *, frame))) {
     qmlInfo(this) << "Failed to invoke handler";
   }
 }

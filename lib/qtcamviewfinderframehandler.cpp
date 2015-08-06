@@ -1,5 +1,3 @@
-// -*- c++ -*-
-
 /*!
  * This file is part of CameraPlus.
  *
@@ -20,38 +18,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef PLUGIN_H
-#define PLUGIN_H
+#include "qtcamviewfinderframehandler.h"
 
-#if defined(QT4)
-#include <QDeclarativeExtensionPlugin>
-#elif defined(QT5)
-#include <QQmlExtensionPlugin>
-#endif
+QtCamViewfinderFrameHandler::QtCamViewfinderFrameHandler() {
 
-#if defined(QT4)
-class DeclarativePlugin : public QDeclarativeExtensionPlugin {
-#elif defined(QT5)
-class DeclarativePlugin : public QQmlExtensionPlugin {
-#endif
+}
 
-  Q_OBJECT
+QtCamViewfinderFrameHandler::~QtCamViewfinderFrameHandler() {
 
-#if defined(QT5)
-  Q_PLUGIN_METADATA(IID "QtCamera");
-#endif
-
-public:
-  DeclarativePlugin(QObject *parent = 0);
-  ~DeclarativePlugin();
-
-#if defined(QT4)
-  void initializeEngine(QDeclarativeEngine *engine, const char *uri);
-#elif defined(QT5)
-  void initializeEngine(QQmlEngine *engine, const char *uri);
-#endif
-
-  void registerTypes(const char *uri);
-};
-
-#endif /* PLUGIN_H */
+}

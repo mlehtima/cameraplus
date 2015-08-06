@@ -40,8 +40,11 @@ class QtCamImageMode;
 class QtCamVideoMode;
 class QtCamPropertySetter;
 class QtCamAnalysisBin;
+class QtCamViewfinderFrameListener;
 
-class QtCamDevicePrivate {
+class QtCamDevicePrivate : public QObject {
+  Q_OBJECT
+
 public:
   QtCamDevicePrivate() :
     cameraBin(0),
@@ -273,41 +276,6 @@ public:
     }
   }
 
-  void _d_error(const QString& message, int code, const QString& debug) {
-    error = true;
-
-    QMetaObject::invokeMethod(q_ptr, "error", Q_ARG(QString, message),
-			      Q_ARG(int, code), Q_ARG(QString, debug));
-
-    if (active) {
-      QMetaObject::invokeMethod(active, "canCaptureChanged", Qt::QueuedConnection);
-    }
-  }
-
-  void _d_stopped() {
-    QMetaObject::invokeMethod(q_ptr, "stopped");
-  }
-
-  void _d_stopping() {
-    if (active) {
-      QMetaObject::invokeMethod(active, "canCaptureChanged", Qt::QueuedConnection);
-    }
-
-    QMetaObject::invokeMethod(q_ptr, "stopping", Qt::QueuedConnection);
-    QMetaObject::invokeMethod(q_ptr, "runningStateChanged", Qt::QueuedConnection,
-			      Q_ARG(bool, false));
-  }
-
-  void _d_started() {
-    if (active) {
-      QMetaObject::invokeMethod(active, "canCaptureChanged", Qt::QueuedConnection);
-    }
-
-    QMetaObject::invokeMethod(q_ptr, "started", Qt::QueuedConnection);
-    QMetaObject::invokeMethod(q_ptr, "runningStateChanged", Qt::QueuedConnection,
-			      Q_ARG(bool, true));
-  }
-
   void setAudioCaptureCaps() {
     QString captureCaps = conf->audioCaptureCaps();
     if (!captureCaps.isEmpty()) {
@@ -505,6 +473,43 @@ public:
     return res;
   }
 
+public slots:
+  void _d_error(const QString& message, int code, const QString& debug) {
+    error = true;
+
+    QMetaObject::invokeMethod(q_ptr, "error", Q_ARG(QString, message),
+			      Q_ARG(int, code), Q_ARG(QString, debug));
+
+    if (active) {
+      QMetaObject::invokeMethod(active, "canCaptureChanged", Qt::QueuedConnection);
+    }
+  }
+
+  void _d_stopped() {
+    QMetaObject::invokeMethod(q_ptr, "stopped");
+  }
+
+  void _d_stopping() {
+    if (active) {
+      QMetaObject::invokeMethod(active, "canCaptureChanged", Qt::QueuedConnection);
+    }
+
+    QMetaObject::invokeMethod(q_ptr, "stopping", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(q_ptr, "runningStateChanged", Qt::QueuedConnection,
+			      Q_ARG(bool, false));
+  }
+
+  void _d_started() {
+    if (active) {
+      QMetaObject::invokeMethod(active, "canCaptureChanged", Qt::QueuedConnection);
+    }
+
+    QMetaObject::invokeMethod(q_ptr, "started", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(q_ptr, "runningStateChanged", Qt::QueuedConnection,
+			      Q_ARG(bool, true));
+  }
+
+public:
   QString name;
   QVariant id;
 
@@ -523,6 +528,7 @@ public:
   QtCamConfig *conf;
   QtCamGstMessageListener *listener;
   QtCamViewfinderBufferListener *bufferListener;
+  QtCamViewfinderFrameListener *frameListener;
   bool error;
   QtCamNotifications *notifications;
   QtCamPropertySetter *propertySetter;
