@@ -28,6 +28,7 @@
 #include <QQmlInfo>
 #endif
 #include <pulse/pulseaudio.h>
+#include <unistd.h>
 #include <sndfile.h>
 
 #define CAMERA_IMAGE_START_SOUND_ID     "cameraplus-image-start"
